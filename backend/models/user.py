@@ -9,7 +9,7 @@ from backend.models.base import BaseCreateUpdateModel
 
 
 class RoleCode(str, enum.Enum):
-    AUDIENCE = "AUDIENCE"
+    USER = "USER"
     ADMIN = "ADMIN"
 
 

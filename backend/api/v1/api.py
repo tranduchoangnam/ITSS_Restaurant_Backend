@@ -2,11 +2,11 @@ from fastapi import APIRouter, FastAPI
 from fastapi.routing import APIRoute
 
 from backend.api.v1.admin.routes import admin_routers
-from backend.api.v1.audience.routes import audience_routers
+from backend.api.v1.user.routes import user_routers
 
 api_router = APIRouter()
 
-api_router.include_router(audience_routers)
+api_router.include_router(user_routers)
 api_router.include_router(admin_routers, prefix="/admin")
 
 

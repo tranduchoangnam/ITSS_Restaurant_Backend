@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Path
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.auth as auth_service
-import backend.api.v1.audience.services.users as user_service
+import backend.api.v1.user.services.auth as auth_service
+import backend.api.v1.user.services.users as user_service
 from backend.api.v1.dependencies.authentication import get_user_if_logged_in
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode

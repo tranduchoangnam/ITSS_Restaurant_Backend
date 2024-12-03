@@ -1,6 +1,6 @@
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.auth as auth_service
+import backend.api.v1.user.services.auth as auth_service
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.schemas.auth import ForgotPasswordRequest, ForgotPasswordResponse

@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Path
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.users as users_service
+import backend.api.v1.user.services.users as users_service
 
 # from backend.api.v1.dependencies.authentication import get_current_audience
 from backend.api.v1.dependencies.authentication import authorize_role
@@ -13,7 +13,7 @@ from backend.db.database import get_db
 from backend.models.user import RoleCode, User
 from backend.schemas.auth import GetMeResponse, TokenResponse
 from backend.schemas.user import (
-    InputRegisterAudienceRequest,
+    InputRegisterUserRequest,
     UpdateUserPublicInformationRequest,
     UpdateUserRequest,
     UserBaseResponse,
@@ -40,7 +40,7 @@ router = APIRouter()
 )
 def update_user_public_information(
     db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.AUDIENCE))],
+    current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
     request: Annotated[
         UpdateUserPublicInformationRequest,
         Body(
@@ -58,7 +58,7 @@ def update_user_public_information(
 def update_user(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.AUDIENCE))],
+    current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
     request: Annotated[
         UpdateUserRequest,
         Body(
@@ -78,14 +78,14 @@ def update_user(
 def delete_user(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.AUDIENCE))],
+    current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
 ):
     return users_service.delete_user(db, current_user, user_id)
 
 
 @router.post("/register/{token}", response_model=UserBaseResponse)
 async def register_with_token(
-    request: InputRegisterAudienceRequest,
+    request: InputRegisterUserRequest,
     db: Session = Depends(get_db),
     token: str = Path(..., description="Email verify token"),
 ):

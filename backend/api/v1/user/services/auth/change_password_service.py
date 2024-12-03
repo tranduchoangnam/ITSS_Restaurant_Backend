@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Session, select
 
-from backend.api.v1.audience.services.auth.secure_password_service import (
+from backend.api.v1.user.services.auth.secure_password_service import (
     get_password_hash,
 )
 from backend.core.error_code import ErrorCode

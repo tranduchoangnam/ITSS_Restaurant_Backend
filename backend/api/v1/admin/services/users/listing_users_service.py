@@ -48,7 +48,7 @@ def _count_users(db: Session, conditions: list):
 
 
 def _build_conditions(query_params: FilteringUsersQueryParams):
-    conditions = [User.role_code == RoleCode.AUDIENCE]
+    conditions = [User.role_code == RoleCode.USER]
     if query_params.start_time:
         conditions.append(User.created_at.cast(Date) >= query_params.start_time.date())
 

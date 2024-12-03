@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlmodel import Session
 
-from backend.api.v1.audience.services.auth.get_user_service import get_user_by_email
+from backend.api.v1.user.services.auth.get_user_service import get_user_by_email
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode
 from backend.core.exception import AccessDeniedException, UnauthorizedException

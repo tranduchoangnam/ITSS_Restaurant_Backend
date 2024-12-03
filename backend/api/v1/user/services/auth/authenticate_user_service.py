@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
-from backend.api.v1.audience.services.auth.get_user_service import get_user_by_email
-from backend.api.v1.audience.services.auth.secure_password_service import (
+from backend.api.v1.user.services.auth.get_user_service import get_user_by_email
+from backend.api.v1.user.services.auth.secure_password_service import (
     verify_password,
 )
 

@@ -38,7 +38,7 @@ class BasicUserInformation(BaseModel):
     }
 
 
-class InputRegisterAudienceRequest(BasicUserInformation):
+class InputRegisterUserRequest(BasicUserInformation):
     email: EmailStr
     password: str
 
