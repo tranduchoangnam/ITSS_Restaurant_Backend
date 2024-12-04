@@ -20,6 +20,7 @@ pandas = "^2.2.2"
 python-jose = "^3.3.0"
 passlib = "^1.7.4"
 psycopg2 = "^2.9.9"
+bcrypt = "^4.2.1"
 
 [build-system]
 requires = ["poetry-core"]

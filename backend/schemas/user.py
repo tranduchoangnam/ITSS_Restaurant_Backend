@@ -38,13 +38,24 @@ class BasicUserInformation(BaseModel):
     }
 
 
-class InputRegisterUserRequest(BasicUserInformation):
+class InputRegisterUserRequest(BaseModel):
     email: EmailStr
     password: str
 
     @validator("password")
     def password_validator(cls, v):
         return password_validator(v)
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "email": "example@gmail.com",
+                    "password": "12345678",
+                }
+            ]
+        }
+    }
 
 
 class UpdateUserRequest(BasicUserInformation):
@@ -56,6 +67,7 @@ class UpdateUserRequest(BasicUserInformation):
     #         raise ValueError("Tags can have at most 10 items")
     #     return v
     pass
+
 
 class UserBaseResponse(UserBase):
     pass
@@ -77,12 +89,15 @@ class UpdateUserPublicInformationRequest(BaseModel):
             raise ValueError(ErrorCode.ERR_INVALID_URL, ErrorMessage.ERR_INVALID_URL)
         return v
 
+
 class ListingUsersItem(BaseModel):
     id: Annotated[int | None, Field(...)]
     created_at: Annotated[datetime, Field(..., description="登録日時")]
     name: Annotated[str, Field(..., description="利用者名")]
     event_application_count: Annotated[int, Field(..., description="イベント参加回数")]
-    followed_organization_count: Annotated[int, Field(..., description="フォロー中の主催者数")]
+    followed_organization_count: Annotated[
+        int, Field(..., description="フォロー中の主催者数")
+    ]
     latest_event_attend_date: Annotated[
         datetime | None, Field(..., description="最新のイベント参加日")
     ]
@@ -90,6 +105,7 @@ class ListingUsersItem(BaseModel):
 
 class ListingUsersResponse(BaseResponse[ListingUsersItem]):
     pass
+
 
 class FilteringUsersQueryParams(BaseModel):
     per_page: Annotated[int | None, Field(Query(default=10, le=50, ge=1))]
@@ -120,6 +136,7 @@ def phone_validator(v):
     if not re.match("^[0-9]*$", v) or len(v) != 11:
         raise ValueError(ErrorCode.ERR_INVALID_PHONE, ErrorMessage.ERR_INVALID_PHONE)
     return v
+
 
 def password_validator(v):
     if len(v) < 8:

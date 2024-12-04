@@ -6,12 +6,24 @@ from sqlmodel import Field
 
 from backend.schemas.user import UserBaseResponse
 
-
 class UserLoginRequest(BaseModel):
     email: str
     password: str
     role_code: str
     remember_me: bool
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "email": "example@gmail.com",
+                    "role_code": "USER",
+                    "password": "12345678",
+                    "remember_me": True,
+                }
+            ]
+        }
+    }
+    
 
 
 class TokenResponse(BaseModel):
@@ -39,7 +51,12 @@ class ForgotPasswordResponse(BaseModel):
 
 
 class ResetPasswordRequest(BaseModel):
-    new_password: Annotated[
+    email: Annotated[EmailStr, Field(description="登録しているメールアドレス")]
+    old_password: Annotated[
+        str, StringConstraints(min_length=8), Field(description="現在のパスワード")
+    ]
+    role_code: Annotated[str, Field(description="ユーザーのロール")]
+    new_password:Annotated[
         str, StringConstraints(min_length=8), Field(description="新パスワード")
     ]
 
@@ -57,8 +74,11 @@ class ResetPasswordRequest(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "new_password": "12345678",
-                    "confirm_password": "12345678",
+                    "email": "example@gmail.com",
+                    "old_password": "12345678",
+                    "role_code": "USER",
+                    "new_password": "123456789",
+                    "confirm_password": "123456789",
                 }
             ]
         }
@@ -69,7 +89,3 @@ class ResetPasswordResponse(BaseModel):
     status: str
     message: str
 
-
-class ResetPasswordTokenResponse(BaseModel):
-    token: str
-    expire_at: datetime

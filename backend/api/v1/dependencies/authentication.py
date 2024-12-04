@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer
 from jose import JWTError, jwt
 from sqlmodel import Session
 
@@ -13,17 +13,20 @@ from backend.core.exception import AccessDeniedException, UnauthorizedException
 from backend.db.database import get_db
 from backend.models.user import RoleCode, User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/", auto_error=False)
-
+auth = HTTPBearer(
+    scheme_name='Authorization'
+)
 
 def get_current_user(
     db: Annotated[Session, Depends(get_db)],
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[str, Depends(auth)],
 ):
     if token:
         try:
+            token_value = token.credentials
+            
             payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+                token_value, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
             email = payload.get("sub")
             if (
@@ -44,7 +47,7 @@ def get_current_user(
 
 def get_user_if_logged_in(
     db: Annotated[Session, Depends(get_db)],
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[str, Depends(auth)],
 ):
     if token:
         return get_current_user(db, token)

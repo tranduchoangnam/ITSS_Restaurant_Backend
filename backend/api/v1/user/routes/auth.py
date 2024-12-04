@@ -19,11 +19,13 @@ from backend.schemas.auth import (
     GetMeResponse,
     ResetPasswordRequest,
     ResetPasswordResponse,
-    ResetPasswordTokenResponse,
     TokenResponse,
     UserLoginRequest,
 )
-
+from backend.schemas.user import (
+    UserBaseResponse,
+    InputRegisterUserRequest,
+)
 router = APIRouter()
 
 
@@ -35,8 +37,7 @@ async def login(
     user = auth_service.authenticate_user(db, **request.model_dump())
     if not user:
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
-    if not user.email_verify_at:
-        raise BadRequestException(ErrorCode.ERR_USER_NOT_VERIFIED)
+   
     access_token_expires = datetime.now() + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -54,6 +55,15 @@ async def login(
         refresh_expire_at=refresh_expire_at,
     )
 
+@router.post("/register", response_model=UserBaseResponse)
+async def register_with_token(
+    request: InputRegisterUserRequest,
+    db: Session = Depends(get_db),
+):
+    kwargs = request.model_dump()
+    new_user = await auth_service.register(db, **kwargs)
+    user_dict = new_user.model_dump()
+    return UserBaseResponse(**user_dict)
 
 @router.get("/me", response_model=GetMeResponse, responses=authenticated_api_responses)
 async def me(
@@ -62,27 +72,12 @@ async def me(
 ):
     return GetMeResponse(
         id=current_user.id,
-        organization_id=current_user.organization_id,
         role_code=current_user.role_code,
         email=current_user.email,
         display_name=current_user.display_name,
-        first_name_kanji=current_user.first_name_kanji,
-        last_name_kanji=current_user.last_name_kanji,
-        first_name_kana=current_user.first_name_kana,
-        last_name_kana=current_user.last_name_kana,
-        company_name=current_user.company_name,
-        company_url=current_user.company_url,
         phone=current_user.phone,
-        postal_code=current_user.postal_code,
-        prefecture_code=current_user.prefecture_code,
         address=current_user.address,
-        industry_code=current_user.industry_code,
-        employee_size_code=current_user.employee_size_code,
-        revenue_code=current_user.revenue_code,
-        job_type_code=current_user.job_type_code,
-        position_code=current_user.position_code,
         avatar_url=current_user.avatar_url,
-        tags=user_service.get_user_tags(db, current_user),
     )
 
 
@@ -116,26 +111,9 @@ async def refresh_token(
     )
 
 
-@router.post(
-    "/forgot-password",
-    response_model=ForgotPasswordResponse,
-    responses=public_api_responses,
-)
-async def forgot_password(
-    db: Annotated[Session, Depends(get_db)],
-    request: Annotated[
-        ForgotPasswordRequest,
-        Body(
-            title="Recovery password - Step 1: Forgot Password",
-            description="Provide user email",
-        ),
-    ],
-):
-    return await auth_service.forgot_password(db, request)
-
 
 @router.post(
-    "/reset-password/{reset_token}",
+    "/reset-password",
     response_model=ResetPasswordResponse,
     responses=public_api_responses,
 )
@@ -144,23 +122,11 @@ async def reset_password(
     request: Annotated[
         ResetPasswordRequest,
         Body(
-            title="Recovery password - Step 2: Reset Password",
+            title="Reset Password",
             description="Provide new password and confirm password.",
         ),
     ],
-    reset_token: Annotated[str, Path(description="Token recovery password")],
 ):
-    await auth_service.reset_password(db, request, reset_token)
+    await auth_service.reset_password(db, request)
     return ResetPasswordResponse(status="success", message="パスワードの再設定が完了しました。")
 
-
-@router.get(
-    "/reset-password/check-token/{reset_token}",
-    responses=public_api_responses,
-    response_model=ResetPasswordTokenResponse,
-)
-async def check_reset_password_token(
-    db: Annotated[Session, Depends(get_db)],
-    reset_token: Annotated[str, Path(description="Token recovery password")],
-):
-    return auth_service.check_valid_reset_password_token(db, reset_token)
