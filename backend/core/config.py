@@ -19,21 +19,14 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_MINUTES: Optional[int]
     REFRESH_TOKEN_REMEMBERED_EXPIRE_MINUTES: Optional[int]
 
-    EMAIL_CONFIRMATION_TOKEN_LENGTH: Optional[int]
-    EMAIL_CONFIRMATION_TOKEN_EXPIRE_MINUTES: Optional[int]
     RESET_PASSWORD_TOKEN_LENGTH: Optional[int]
     RESET_PASSWORD_TOKEN_EXPIRE_MINUTES: Optional[int]
     FRONTEND_URL: Optional[str]
-    EMAIL_ADMIN: Optional[str]
     SQLALCHEMY_DATABASE_URL: str = ""
     BUCKET_NAME: Optional[str]
     MEDIA_PATH: Optional[str]
     MEDIA_PATH_TMP_PREFIX: str = "tmp/"
     PUBLIC_CDN_URL: Optional[str]
-
-    EMAIL_SENDER: Optional[str]
-    ORG_BCC_MAIL: Optional[str]
-    SENDER_NAME: Optional[str]
 
     @validator("SQLALCHEMY_DATABASE_URL", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
