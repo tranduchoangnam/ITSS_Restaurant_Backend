@@ -1,4 +1,16 @@
-### Install dependencies
+## Docker Usage
+### Build and run
+```bash
+docker-compose up --build .
+```
+### Execute command and migrate database in container
+```bash
+docker exec -it [image_id] bash
+alembic upgrade heads
+```
+
+## Local Usage 
+## Install dependencies
 ```bash
 poetry install
 ```

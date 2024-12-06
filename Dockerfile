@@ -50,18 +50,23 @@ COPY poetry.lock pyproject.toml README.md ./
 # install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --only main
 
-# `development` image is used during development / testing
+
+# Development Stage
 FROM python-base AS development
 
-# copy in our built poetry + venv
-COPY --from=poetry-base $POETRY_HOME $POETRY_HOME
+# Copy môi trường ảo và Poetry
+COPY --from=builder-base $POETRY_HOME $POETRY_HOME
+COPY --from=builder-base /workspace/.venv /workspace/.venv
 
+# Cài đặt thư viện cần thiết
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    libpq-dev build-essential 
+    libpq-dev build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# will become mountpoint of our code
 WORKDIR /workspace
 
+# Mount mã nguồn và cache thư viện (sẽ dùng volumes từ docker-compose)
 COPY . .
 
+# Mở cổng cho FastAPI
 EXPOSE 8000
