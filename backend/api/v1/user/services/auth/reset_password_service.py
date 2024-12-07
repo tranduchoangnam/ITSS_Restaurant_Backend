@@ -31,7 +31,6 @@ async def reset_password(db: Session, request: ResetPasswordRequest):
         user = db.exec(select(User).where(User.email == request.email)).first()
 
         # Update user
-        user.reset_password_token = user.reset_password_token_expire_at = None
         user.password = get_password_hash(request.new_password)
         user.updated_by = user.id
         user.updated_at = datetime.now()

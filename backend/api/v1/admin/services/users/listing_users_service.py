@@ -27,7 +27,7 @@ def _get_users(db: Session, query_params: FilteringUsersQueryParams, conditions:
                     User.display_name.isnot(None),
                     User.display_name,
                 ),
-                else_=func.concat(User.first_name_kanji, User.last_name_kanji),
+                else_=User.email,
             ).label("name"),
         )
         .where(*conditions)
@@ -49,11 +49,6 @@ def _count_users(db: Session, conditions: list):
 
 def _build_conditions(query_params: FilteringUsersQueryParams):
     conditions = [User.role_code == RoleCode.USER]
-    if query_params.start_time:
-        conditions.append(User.created_at.cast(Date) >= query_params.start_time.date())
-
-    if query_params.end_time:
-        conditions.append(User.created_at.cast(Date) <= query_params.end_time.date())
 
     if query_params.name_keyword:
         name_keyword = query_params.name_keyword.lower()
@@ -61,12 +56,7 @@ def _build_conditions(query_params: FilteringUsersQueryParams):
             or_(
                 cast(User.id, String).contains(name_keyword),
                 func.lower(User.display_name).contains(name_keyword),
-                func.lower(
-                    func.concat(User.first_name_kanji, User.last_name_kanji)
-                ).contains(name_keyword),
-                func.lower(
-                    func.concat(User.first_name_kana, User.last_name_kana)
-                ).contains(name_keyword),
+                func.lower(User.email).contains(name_keyword),
             )
         )
 

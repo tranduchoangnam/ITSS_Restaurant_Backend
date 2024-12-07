@@ -94,14 +94,6 @@ class ListingUsersItem(BaseModel):
     id: Annotated[int | None, Field(...)]
     created_at: Annotated[datetime, Field(..., description="登録日時")]
     name: Annotated[str, Field(..., description="利用者名")]
-    event_application_count: Annotated[int, Field(..., description="イベント参加回数")]
-    followed_organization_count: Annotated[
-        int, Field(..., description="フォロー中の主催者数")
-    ]
-    latest_event_attend_date: Annotated[
-        datetime | None, Field(..., description="最新のイベント参加日")
-    ]
-
 
 class ListingUsersResponse(BaseResponse[ListingUsersItem]):
     pass
@@ -110,19 +102,6 @@ class ListingUsersResponse(BaseResponse[ListingUsersItem]):
 class FilteringUsersQueryParams(BaseModel):
     per_page: Annotated[int | None, Field(Query(default=10, le=50, ge=1))]
     page: Annotated[int | None, Field(Query(default=1, ge=1))]
-
-    start_time: Annotated[
-        datetime | None, Field(Query(default=None, description="登録期間で検索"))
-    ]
-
-    end_time: Annotated[
-        datetime | None, Field(Query(default=None, description="登録期間で検索"))
-    ]
-
-    event_keyword: Annotated[
-        str | None,
-        Field(Query(default=None, description="イベント名・イベントNo.で検索")),
-    ]
 
     name_keyword: Annotated[
         str | None,
