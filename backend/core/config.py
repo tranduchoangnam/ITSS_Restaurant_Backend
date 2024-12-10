@@ -5,7 +5,6 @@ from pydantic import DirectoryPath, validator
 from pydantic_settings import BaseSettings
 from sqlalchemy.engine import URL
 
-
 class Settings(BaseSettings):
     DB_CONNECTION: Optional[str]
     DB_HOST: Optional[str]

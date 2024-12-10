@@ -17,9 +17,6 @@ services:
     env_file:
       - ./backend/.env
 
-    command: >
-      poetry run uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 
-
   db:
     image: postgres:latest
     restart: unless-stopped
