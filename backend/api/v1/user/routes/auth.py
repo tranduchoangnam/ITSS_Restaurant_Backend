@@ -65,20 +65,12 @@ async def register_with_token(
     user_dict = new_user.model_dump()
     return UserBaseResponse(**user_dict)
 
-@router.get("/me", response_model=GetMeResponse, responses=authenticated_api_responses)
+@router.get("/me", response_model=UserBaseResponse, responses=authenticated_api_responses)
 async def me(
     current_user: Annotated[User, Depends(get_user_if_logged_in)],
     db: Session = Depends(get_db),
 ):
-    return GetMeResponse(
-        id=current_user.id,
-        role_code=current_user.role_code,
-        email=current_user.email,
-        display_name=current_user.display_name,
-        phone=current_user.phone,
-        address=current_user.address,
-        avatar_url=current_user.avatar_url,
-    )
+    return UserBaseResponse(**current_user.model_dump())
 
 
 @router.get("/refresh-token")

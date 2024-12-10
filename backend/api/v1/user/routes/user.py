@@ -7,7 +7,7 @@ from sqlmodel import Session
 import backend.api.v1.user.services.users as users_service
 
 # from backend.api.v1.dependencies.authentication import get_current_audience
-from backend.api.v1.dependencies.authentication import authorize_role
+from backend.api.v1.dependencies.authentication import authorize_role, get_user_if_logged_in
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_db
 from backend.models.user import RoleCode, User
@@ -53,12 +53,12 @@ router = APIRouter()
 
 
 @router.patch(
-    "/{user_id}", response_model=GetMeResponse, responses=authenticated_api_responses
+    "/{user_id}", response_model=UserBaseResponse, responses=authenticated_api_responses
 )
 def update_user(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
+    current_user: Annotated[User, Depends(get_user_if_logged_in)],
     request: Annotated[
         UpdateUserRequest,
         Body(
