@@ -35,18 +35,11 @@ class Settings(BaseSettings):
             raise ValueError(
                 "must specify at least DB_CONNECTION or SQLALCHEMY_DATABASE_URL",
             )
-        
         username = values.get("DB_USERNAME")
         password = values.get("DB_PASSWORD")
         host = values.get("DB_HOST")
         port = values.get("DB_PORT")
         database = values.get("DB_DATABASE")
-        
-        print(
-            URL(
-                connection, username, password, host, port, database, []
-            ).render_as_string(False)
-        )
         return URL(
             connection, username, password, host, port, database, []
         ).render_as_string(False)
@@ -58,4 +51,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-print(settings)
