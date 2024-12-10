@@ -70,3 +70,6 @@ COPY . .
 
 # Mở cổng cho FastAPI
 EXPOSE 8000
+
+# Run FastAPI
+CMD ["poetry", "run", "uvicorn", "backend.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
