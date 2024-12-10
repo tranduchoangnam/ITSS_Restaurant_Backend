@@ -33,23 +33,23 @@ router = APIRouter()
 #     )
 
 
-@router.patch(
-    "/public-information",
-    response_model=GetMeResponse,
-    responses=authenticated_api_responses,
-)
-def update_user_public_information(
-    db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
-    request: Annotated[
-        UpdateUserPublicInformationRequest,
-        Body(
-            title="Update User Public Information request",
-            description="Provide avatar_url, display_name",
-        ),
-    ],
-):
-    return users_service.update_user_public_information(db, current_user, request)
+# @router.patch(
+#     "/public-information",
+#     response_model=GetMeResponse,
+#     responses=authenticated_api_responses,
+# )
+# def update_user_public_information(
+#     db: Annotated[Session, Depends(get_db)],
+#     current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
+#     request: Annotated[
+#         UpdateUserPublicInformationRequest,
+#         Body(
+#             title="Update User Public Information request",
+#             description="Provide avatar_url, display_name",
+#         ),
+#     ],
+# ):
+#     return users_service.update_user_public_information(db, current_user, request)
 
 
 @router.patch(
@@ -70,26 +70,15 @@ def update_user(
     return users_service.update_user(db, current_user, request, user_id)
 
 
-@router.delete(
-    "/{user_id}",
-    status_code=HTTPStatus.NO_CONTENT,
-    responses=authenticated_api_responses,
-)
-def delete_user(
-    user_id: int,
-    db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
-):
-    return users_service.delete_user(db, current_user, user_id)
+# @router.delete(
+#     "/{user_id}",
+#     status_code=HTTPStatus.NO_CONTENT,
+#     responses=authenticated_api_responses,
+# )
+# def delete_user(
+#     user_id: int,
+#     db: Annotated[Session, Depends(get_db)],
+#     current_user: Annotated[User, Depends(authorize_role(RoleCode.USER))],
+# ):
+#     return users_service.delete_user(db, current_user, user_id)
 
-
-@router.post("/register/{token}", response_model=UserBaseResponse)
-async def register_with_token(
-    request: InputRegisterUserRequest,
-    db: Session = Depends(get_db),
-    token: str = Path(..., description="Email verify token"),
-):
-    kwargs = request.model_dump()
-    new_user = await users_service.register_second_step(token, db, **kwargs)
-    user_dict = new_user.model_dump()
-    return UserBaseResponse(**user_dict)

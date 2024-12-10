@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 import backend.api.v1.user.services.dishes as dish_service
-from backend.api.v1.dependencies.authentication import authorize_role
+from backend.api.v1.dependencies.authentication import authorize_role, get_user_if_logged_in
 from backend.core.response import authenticated_api_responses
 from backend.db.database import get_db
 from backend.models.dish import Dish
@@ -36,6 +36,27 @@ def listing_dishes(
     ] = None,
 ):
     dishes, total = dish_service.listing_dishes(db, query_params)
+
+    return ListingDishesResponse(
+        page=query_params.page,
+        per_page=query_params.per_page,
+        total=total,
+        data=dishes,
+    )
+    
+@router.get(
+    "/suggest",
+    response_model=ListingDishesResponse,
+    responses=authenticated_api_responses,
+)
+def listing_suggested_dishes(
+    current_user: Annotated[User, Depends(get_user_if_logged_in)],
+    db: Session = Depends(get_db),
+    query_params: Annotated[
+        FilteringDishesQueryParams, Depends(FilteringDishesQueryParams)
+    ] = None,
+):
+    dishes, total = dish_service.listing_suggested_dishes(db, query_params, current_user)
 
     return ListingDishesResponse(
         page=query_params.page,
