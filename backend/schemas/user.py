@@ -20,18 +20,70 @@ class UserBase(BaseModel):
     phone: Optional[str]
     address: Optional[str]
     avatar_url: Optional[str]
+    dark_mode: Optional[bool]
+    language: Optional[str]
+    font_size: Optional[int]
+    notification: Optional[bool]
+    loved_flavor: Optional[list[str]]
+    hated_flavor: Optional[list[str]]
+    vegetarian: Optional[bool]
+    loved_distinct: Optional[float]
+    loved_price: Optional[int]
 
 
 class BasicUserInformation(BaseModel):
+    display_name: Annotated[
+        Optional[str],
+        Field(default=None, description="プロフィール表示名", max_length=255),
+    ]
     phone: Annotated[str, Field(description="電話番号")]
     address: Annotated[str, Field(description="市区町村番地・ビル名")]
+    avatar_url: Annotated[
+        Optional[str],
+        Field(default=None, description="プロフィール表示画像", max_length=2048),
+    ]
+    dark_mode: Annotated[bool, Field(default=False, description="ダークモード")]
+    language: Annotated[str, Field(default="ja", description="言語")]
+    font_size: Annotated[
+        Optional[int],
+        Field(default=None, description="フォントサイズ", ge=1),
+    ]
+    notification: Annotated[bool, Field(default=True, description="通知設定")]
+    loved_flavor: Annotated[
+        Optional[list[str]],
+        Field(default=None, description="好きな味"),
+    ]
+    hated_flavor: Annotated[
+        Optional[list[str]],
+        Field(default=None, description="嫌いな味"),
+    ]
+    vegetarian: Annotated[bool, Field(default=False, description="ベジタリアン")]
+    loved_distinct: Annotated[
+        Optional[float],
+        Field(default=None, description="好きな辛さ", ge=0),
+    ]
+    loved_price: Annotated[
+        Optional[int],
+        Field(default=None, description="好きな価格", ge=0),
+    ]
 
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
+                    "display_name": "example",
                     "address": "Susukigahara, Kutsukimi, Nerima, Tokyo",
                     "phone": "09023456789",
+                    "avatar_url": "https://example.com/avatar.jpg",
+                    "dark_mode": False,
+                    "language": "ja",
+                    "font_size": 16,
+                    "notification": True,
+                    "loved_flavor": ["spicy", "sour"],
+                    "hated_flavor": ["sweet"],
+                    "vegetarian": False,
+                    "loved_distinct": 3.5,
+                    "loved_price": 1000,
                 }
             ]
         }
@@ -59,13 +111,6 @@ class InputRegisterUserRequest(BaseModel):
 
 
 class UpdateUserRequest(BasicUserInformation):
-    # tags: Optional[list[int]] = Field(default=None, description="tags list")
-
-    # @validator("tags")
-    # def check_tags_length(cls, v):
-    #     if v is not None and len(v) > 10:
-    #         raise ValueError("Tags can have at most 10 items")
-    #     return v
     pass
 
 

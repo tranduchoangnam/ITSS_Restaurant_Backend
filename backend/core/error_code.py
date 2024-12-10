@@ -34,3 +34,4 @@ class ErrorMessage:
     ERR_EMAIL_ALREADY_EXISTS = "メールアドレスが既に存在します。"
     ERR_DISH_NOT_FOUND = "This dish doesn't exist"
     ERR_USER_NOT_FOUND = "This user doesn't exist"
+    ERR_ACCESS_DENIED = "You don't have permission to access this resource"
