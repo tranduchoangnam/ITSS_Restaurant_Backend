@@ -7,7 +7,7 @@ from sqlmodel import Session
 import backend.api.v1.user.services.users as users_service
 
 # from backend.api.v1.dependencies.authentication import get_current_audience
-from backend.api.v1.dependencies.authentication import authorize_role, get_user_if_logged_in
+from backend.api.v1.dependencies.authentication import authorize_role, get_current_user
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_db
 from backend.models.user import RoleCode, User
@@ -58,7 +58,7 @@ router = APIRouter()
 def update_user(
     user_id: int,
     db: Annotated[Session, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_user_if_logged_in)],
+    current_user: Annotated[User, Depends(get_current_user)],
     request: Annotated[
         UpdateUserRequest,
         Body(

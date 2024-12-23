@@ -1,14 +1,14 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from sqlmodel import Session
 import backend.api.v1.user.services.dishes as dish_service
-from backend.api.v1.dependencies.authentication import authorize_role, get_user_if_logged_in
-from backend.core.response import authenticated_api_responses
+from backend.api.v1.dependencies.authentication import authorize_role, get_user_if_logged_in, get_current_user
+from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_db
 from backend.models.dish import Dish
 from backend.models.user import RoleCode, User
-from backend.schemas.dish import FilteringDishesQueryParams, ListingDishesResponse, CreateDishRequest, DishBase
+from backend.schemas.dish import FilteringDishesQueryParams, ListingDishesResponse, CreateDishRequest, DishBase, UpdateDishRequest
 
 router = APIRouter()
 
@@ -27,15 +27,16 @@ def create_dish(
 @router.get(
     "",
     response_model=ListingDishesResponse,
-    responses=authenticated_api_responses,
+    responses=public_api_responses,
 )
 def listing_dishes(
     db: Session = Depends(get_db),
     query_params: Annotated[
         FilteringDishesQueryParams, Depends(FilteringDishesQueryParams)
     ] = None,
+    user: Annotated[User, Depends(get_user_if_logged_in)] = None,
 ):
-    dishes, total = dish_service.listing_dishes(db, query_params)
+    dishes, total = dish_service.listing_dishes(db, query_params, user)
 
     return ListingDishesResponse(
         page=query_params.page,
@@ -50,7 +51,7 @@ def listing_dishes(
     responses=authenticated_api_responses,
 )
 def listing_suggested_dishes(
-    current_user: Annotated[User, Depends(get_user_if_logged_in)],
+    current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
     query_params: Annotated[
         FilteringDishesQueryParams, Depends(FilteringDishesQueryParams)
@@ -78,4 +79,25 @@ def get_dish_by_id(
 
     return dish
 
+@router.patch(
+    "/{dish_id}", response_model=DishBase, responses=authenticated_api_responses
+)
+def update_dish(
+    dish_id: int,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(authorize_role(RoleCode.ADMIN))],
+    request: UpdateDishRequest
+):
+    return dish_service.update_dish(db, request, dish_id)
+
+@router.delete(
+    "/{dish_id}",
+    responses=authenticated_api_responses,
+)
+def delete_dish(
+    dish_id: int,
+    db: Session = Depends(get_db),
+    current_user: Annotated[User, Depends(authorize_role(RoleCode.ADMIN))] = None,
+):
+    return dish_service.delete_dish(db, dish_id)
 

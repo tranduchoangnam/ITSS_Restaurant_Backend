@@ -3,17 +3,24 @@ from datetime import datetime
 from sqlalchemy import Date, case, literal, or_, any_
 from sqlmodel import Session, String, cast, func, select
 from sqlalchemy.sql.expression import func as sql_func
-
-from backend.constants.account_status import AccountStatus
+from sqlalchemy.dialects.postgresql import array, ARRAY
 from backend.models.dish import Dish
 from backend.models.user import User
-from backend.schemas.dish import FilteringDishesQueryParams, DishBase
+from backend.schemas.dish import (
+    FilteringDishesQueryParams,
+    GetDishDetailResponse,
+    DishBase,
+)
 from backend.api.v1.dependencies.authentication import get_current_user
+from backend.map.map_service import calculate_distance, get_location
+from backend.core.constant import MapLocation
 
 
-def listing_dishes(db: Session, query_params: FilteringDishesQueryParams):
+def listing_dishes(
+    db: Session, query_params: FilteringDishesQueryParams, current_user: User
+):
     conditions = _build_conditions(query_params)
-    dishes = _get_dishes(db, query_params, conditions)
+    dishes = _get_dishes(db, query_params, conditions, current_user)
     total = _count_dishes(db, conditions)
 
     return dishes, total
@@ -30,9 +37,12 @@ def listing_suggested_dishes(
 
 
 def _get_dishes(
-    db: Session, query_params: FilteringDishesQueryParams, conditions: list
+    db: Session,
+    query_params: FilteringDishesQueryParams,
+    conditions: list,
+    current_user: User,
 ):
-
+    location = current_user.location if current_user else MapLocation.HUST
     query = (
         select(Dish)
         .where(*conditions)
@@ -43,7 +53,12 @@ def _get_dishes(
 
     dishes = db.exec(query).all()
 
-    return [DishBase(**dish.model_dump()) for dish in dishes]
+    return [
+        GetDishDetailResponse(
+            **dish.model_dump(), distance=calculate_distance(location, dish.location)
+        )
+        for dish in dishes
+    ]
 
 
 def _get_suggested_dishes(
@@ -52,22 +67,30 @@ def _get_suggested_dishes(
     conditions: list,
     current_user: User,
 ):
+    location = current_user.location if current_user else MapLocation.HUST
     # Add conditions based on user preferences
     if current_user.loved_flavor:
+        lower_loved_flavor = [flavor.lower() for flavor in current_user.loved_flavor]
         conditions.append(
             or_(
-                func.lower(Dish.info).contains(current_user.loved_flavor.lower()),
-                func.lower(current_user.loved_flavor)
-                == any_(func.lower(Dish.categories)),
+                func.lower(Dish.info).contains(func.any_(lower_loved_flavor)),
+                Dish.categories.op("&&")(
+                    array(lower_loved_flavor)
+                ),  # Overlap with categories
             )
         )
 
     if current_user.hated_flavor:
+        lower_hated_flavor = [flavor.lower() for flavor in current_user.hated_flavor]
         conditions.append(
             ~or_(
-                func.lower(Dish.info).contains(current_user.hated_flavor.lower()),
-                func.lower(current_user.hated_flavor)
-                == any_(func.lower(Dish.categories)),
+                func.lower(Dish.info).contains(func.any_(lower_hated_flavor)),
+                or_(
+                    *[
+                        func.array_contains(Dish.categories, flavor)
+                        for flavor in lower_loved_flavor
+                    ]
+                ),
             )
         )
 
@@ -98,9 +121,21 @@ def _get_suggested_dishes(
             ],  # Exclude already suggested dishes
             limit=remaining_count,
         )
-        dishes.extend([DishBase(**dish.model_dump()) for dish in random_dishes])
+        dishes.extend(
+            [
+                DishBase(
+                    **dish.model_dump(),
+                )
+                for dish in random_dishes
+            ]
+        )
 
-    return [DishBase(**dish.model_dump()) for dish in dishes]
+    return [
+        GetDishDetailResponse(
+            **dish.model_dump(), distance=calculate_distance(location, dish.location)
+        )
+        for dish in dishes
+    ]
 
 
 def _get_random_dishes(db: Session, exclude_ids: list[int], limit: int):
@@ -133,9 +168,8 @@ def _build_conditions(query_params: FilteringDishesQueryParams):
                 cast(Dish.id, String).contains(name_keyword),
                 func.lower(Dish.name).contains(name_keyword),
                 func.lower(Dish.address).contains(name_keyword),
-                func.lower(Dish.price).contains(name_keyword),
                 func.lower(Dish.info).contains(name_keyword),
-                func.lower(name_keyword) == any_(func.lower(Dish.categories)),
+                func.lower(name_keyword) == func.any_(Dish.categories),
             )
         )
 

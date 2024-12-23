@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     MEDIA_PATH: Optional[str]
     MEDIA_PATH_TMP_PREFIX: str = "tmp/"
     PUBLIC_CDN_URL: Optional[str]
+    MAP_API_KEY: Optional[str]
+    MAP_API_URL: Optional[str]
 
     @validator("SQLALCHEMY_DATABASE_URL", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
