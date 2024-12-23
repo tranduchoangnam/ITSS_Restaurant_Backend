@@ -39,6 +39,7 @@ class User(SQLModel, BaseCreateUpdateModel, table=True):
     )
     phone: Optional[str] = Field(sa_column=Column(String(20)), default=None)
     address: Optional[str] = Field(sa_column=Column(Text), default=None)
+    location: Optional[str] = Field(sa_column=Column(String(255)), default=None)
     avatar_url: Optional[str] = Field(
         sa_column=Column(String(2048), nullable=True), default=None
     )

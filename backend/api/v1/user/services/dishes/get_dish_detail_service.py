@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import Date, case, literal, or_, any_
 from sqlmodel import Session, String, cast, func, select
 
-from backend.constants.account_status import AccountStatus
 from backend.models.dish import Dish
 from backend.schemas.dish import FilteringDishesQueryParams, DishBase
 from backend.core.exception import BadRequestException

@@ -4,7 +4,7 @@ from backend.core.exception import BadRequestException, AccessDeniedException
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.models.user import User, RoleCode
 from backend.schemas.user import UpdateUserRequest, UserBaseResponse
-
+from backend.map.map_service import get_location
 
 def update_user(
     db: Session,
@@ -28,6 +28,8 @@ def update_user(
 
     # Update the user's fields based on the request
     update_data = request.model_dump()
+    address = update_data.get("address", "")
+    update_data["location"] = get_location(address)
     for key, value in update_data.items():
         setattr(user, key, value)
 

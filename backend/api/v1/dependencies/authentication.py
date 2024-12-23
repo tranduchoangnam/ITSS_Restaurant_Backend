@@ -14,7 +14,8 @@ from backend.db.database import get_db
 from backend.models.user import RoleCode, User
 
 auth = HTTPBearer(
-    scheme_name='Authorization'
+    scheme_name='Authorization',
+    auto_error=False
 )
 
 def get_current_user(
@@ -41,9 +42,7 @@ def get_current_user(
         if not user:
             raise UnauthorizedException(error_code=ErrorCode.ERR_UNAUTHORIZED)
         return user
-    else:
-        raise UnauthorizedException(error_code=ErrorCode.ERR_UNAUTHORIZED)
-
+    raise UnauthorizedException(error_code=ErrorCode.ERR_UNAUTHORIZED)
 
 def get_user_if_logged_in(
     db: Annotated[Session, Depends(get_db)],

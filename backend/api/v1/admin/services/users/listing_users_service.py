@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Date, case, literal, or_
 from sqlmodel import Session, String, cast, func, select
 
-from backend.constants.account_status import AccountStatus
+from backend.core.constant import AccountStatus
 from backend.models.user import RoleCode, User
 from backend.schemas.user import FilteringUsersQueryParams
 

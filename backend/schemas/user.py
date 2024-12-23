@@ -6,8 +6,7 @@ from fastapi import Query
 from pydantic import BaseModel, EmailStr, validator
 from sqlmodel import Field
 
-from backend.constants.account_status import AccountStatus
-from backend.core.constant import ValidCode
+from backend.core.constant import AccountStatus
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.schemas.base import BaseResponse
 
@@ -19,6 +18,7 @@ class UserBase(BaseModel):
     display_name: Optional[str]
     phone: Optional[str]
     address: Optional[str]
+    location: Optional[str]
     avatar_url: Optional[str]
     dark_mode: Optional[bool]
     language: Optional[str]
@@ -72,7 +72,7 @@ class BasicUserInformation(BaseModel):
             "examples": [
                 {
                     "display_name": "example",
-                    "address": "Susukigahara, Kutsukimi, Nerima, Tokyo",
+                    "address": "1 Đ. Đại Cồ Việt, Bách Khoa, Hai Bà Trưng, Hà Nội, Vietnam",
                     "phone": "09023456789",
                     "avatar_url": "https://example.com/avatar.jpg",
                     "dark_mode": False,
