@@ -28,7 +28,8 @@ class Settings(BaseSettings):
     PUBLIC_CDN_URL: Optional[str]
     MAP_API_KEY: Optional[str]
     MAP_API_URL: Optional[str]
-
+    CLOUDINARY_URL: Optional[str]
+    
     @validator("SQLALCHEMY_DATABASE_URL", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
         if isinstance(v, str) and v:
