@@ -85,19 +85,11 @@ def _get_suggested_dishes(
         conditions.append(
             ~or_(
                 func.lower(Dish.info).contains(func.any_(lower_hated_flavor)),
-                or_(
-                    *[
-                        func.array_contains(Dish.categories, flavor)
-                        for flavor in lower_loved_flavor
-                    ]
-                ),
+                 Dish.categories.op("&&")(
+                    array(lower_hated_flavor)
+                ),  
             )
         )
-
-    # if current_user.loved_distinct:
-    #     conditions.append(
-    #         func.lower(Dish.distinct).contains(current_user.loved_distinct.lower())
-    #     )
 
     if current_user.loved_price:
         conditions.append(Dish.price <= current_user.loved_price)
