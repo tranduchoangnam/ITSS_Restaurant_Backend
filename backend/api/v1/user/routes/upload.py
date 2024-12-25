@@ -24,5 +24,5 @@ def upload_image(
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     file_name = f"{user.email}_{timestamp}"
     file_content = file.file.read()
-    return UploadResponse(url=file_name)
+    return UploadResponse(url=uploadImage(file_content, file_name))
     
