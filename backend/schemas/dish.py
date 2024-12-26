@@ -14,6 +14,7 @@ class DishBase(BaseModel):
     id: Optional[int]
     name: Optional[str]
     address: Optional[str]
+    restaurant_name: Optional[str]
     location: Optional[str]
     price: Optional[int]
     info: Optional[str]
@@ -45,7 +46,7 @@ class CreateDishRequest(BaseModel):
     info: Optional[str]
     images: Optional[List[str]]
     categories: Optional[List[str]]
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -60,6 +61,6 @@ class CreateDishRequest(BaseModel):
             ]
         }
     }
-    
+
 class UpdateDishRequest(CreateDishRequest):
     pass

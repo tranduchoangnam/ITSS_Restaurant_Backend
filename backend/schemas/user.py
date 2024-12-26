@@ -36,8 +36,8 @@ class BasicUserInformation(BaseModel):
         Optional[str],
         Field(default=None, description="プロフィール表示名", max_length=255),
     ]
-    phone: Annotated[str, Field(description="電話番号")]
-    address: Annotated[str, Field(description="市区町村番地・ビル名")]
+    phone: Annotated[Optional[str], Field(default=None, description="電話番号")]
+    address: Annotated[Optional[str], Field(description="市区町村番地・ビル名")]
     avatar_url: Annotated[
         Optional[str],
         Field(default=None, description="プロフィール表示画像", max_length=2048),
