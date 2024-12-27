@@ -45,7 +45,7 @@ class CreateDishRequest(BaseModel):
     info: Optional[str]
     images: Optional[List[str]]
     categories: Optional[List[str]]
-    
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -60,6 +60,6 @@ class CreateDishRequest(BaseModel):
             ]
         }
     }
-    
+
 class UpdateDishRequest(CreateDishRequest):
     pass

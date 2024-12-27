@@ -26,9 +26,9 @@ class Review(SQLModel, BaseCreateUpdateModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     dish_id: Optional[int] = Field(default=None, foreign_key="dishes.id")
-    rating: Optional[int] = Field(sa_column=Column(Integer), default=None)
+    rating: Optional[int] = Field(sa_column=Column(Integer), default=0)
     comment: Optional[str] = Field(sa_column=Column(Text), default=None)
-    
+
     #user_id and dish_id are foreign keys to the User and Dish tables respectively
 
-    
+
