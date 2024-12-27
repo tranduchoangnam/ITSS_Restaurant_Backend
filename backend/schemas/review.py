@@ -32,8 +32,7 @@ class CreateReviewRequest(BaseModel):
         }
     }
 
-class ListingDishReviewsResponse(BaseResponse[ReviewBase]):
+class ListingDishReviewsResponse(BaseModel):
     avg_rating: float
-    page: Optional[int] = None
-    per_page: Optional[int] = None
-    data: List[ReviewBase]
+    total: int
+    reviews: List[ReviewBase]

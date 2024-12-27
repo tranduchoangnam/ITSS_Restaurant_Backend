@@ -23,7 +23,7 @@ def get_dish_reviews(
     reviews, total, avg_rating = review_service.get_dish_reviews(db, dish_id)
     return ListingDishReviewsResponse(
         total=total,
-        data=reviews,
+        reviews=reviews,
         avg_rating=avg_rating,
     )
 
