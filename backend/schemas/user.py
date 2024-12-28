@@ -109,6 +109,7 @@ class InputRegisterUserRequest(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
+                    "display_name": "example",
                     "email": "example@gmail.com",
                     "password": "12345678",
                 }
