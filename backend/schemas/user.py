@@ -91,6 +91,7 @@ class BasicUserInformation(BaseModel):
 
 
 class InputRegisterUserRequest(BaseModel):
+    display_name: str
     email: EmailStr
     password: str
 

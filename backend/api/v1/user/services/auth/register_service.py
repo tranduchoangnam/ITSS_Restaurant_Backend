@@ -17,6 +17,7 @@ async def register(db: Session, **kwargs):
 
     new_user = User(
         email=kwargs.get("email"),
+        display_name=kwargs.get("display_name"),
         role_code=RoleCode.USER,
         password=auth_service.get_password_hash(kwargs.get("password")),
         created_at=datetime.now(),
