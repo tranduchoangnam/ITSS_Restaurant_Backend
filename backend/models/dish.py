@@ -28,6 +28,7 @@ class Dish(SQLModel, BaseCreateUpdateModel, table=True):
         sa_column=Column(String(255), nullable=True), default=None
     )
     address: Optional[str] = Field(sa_column=Column(Text), default=None)
+    restaurant_name: Optional[str] = Field(sa_column=Column(Text), default=None)
     location: Optional[str] = Field(sa_column=Column(String(255)), default=None)
     price: Optional[int] = Field(sa_column=Column(Integer), default=None)
     info: Optional[str] = Field(sa_column=Column(Text), default=None)

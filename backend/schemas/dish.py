@@ -14,6 +14,7 @@ class DishBase(BaseModel):
     id: Optional[int]
     name: Optional[str]
     address: Optional[str]
+    restaurant_name: Optional[str]
     location: Optional[str]
     price: Optional[int]
     info: Optional[str]
