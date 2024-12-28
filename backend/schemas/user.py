@@ -26,6 +26,7 @@ class UserBase(BaseModel):
     notification: Optional[bool]
     loved_flavor: Optional[list[str]]
     hated_flavor: Optional[list[str]]
+    loved_dish: Optional[list[str]]
     vegetarian: Optional[bool]
     loved_distinct: Optional[float]
     loved_price: Optional[int]
@@ -57,6 +58,10 @@ class BasicUserInformation(BaseModel):
         Optional[list[str]],
         Field(default=None, description="嫌いな味"),
     ]
+    loved_dish: Annotated[
+        Optional[list[str]],
+        Field(default=None, description="好きな料理"),
+    ]
     vegetarian: Annotated[bool, Field(default=False, description="ベジタリアン")]
     loved_distinct: Annotated[
         Optional[float],
@@ -79,8 +84,9 @@ class BasicUserInformation(BaseModel):
                     "language": "ja",
                     "font_size": 16,
                     "notification": True,
-                    "loved_flavor": ["spicy", "sour"],
-                    "hated_flavor": ["sweet"],
+                    "loved_flavor": ["甘い", "酸っぱい"],
+                    "hated_flavor": ["辛い", "苦い"],
+                    "loved_dish": ["バンミー", "フォー"],
                     "vegetarian": False,
                     "loved_distinct": 3.5,
                     "loved_price": 1000,

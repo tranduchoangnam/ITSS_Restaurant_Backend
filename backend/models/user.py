@@ -56,10 +56,12 @@ class User(SQLModel, BaseCreateUpdateModel, table=True):
     hated_flavor: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(String(255))), default=None
     )
+    loved_dish:  Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(String(255))), default=None
+    )
     vegetarian: Optional[bool] = Field(sa_column=Column(Boolean), default=False)
     loved_distinct: Optional[float] = Field(sa_column=Column(Float), default=None)
     loved_price: Optional[int] = Field(sa_column=Column(Integer), default=None)
-
     deleted_at: Optional[datetime] = Field(
         sa_column=Column(
             TIMESTAMP,

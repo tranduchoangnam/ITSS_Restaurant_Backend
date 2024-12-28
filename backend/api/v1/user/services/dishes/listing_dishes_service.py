@@ -73,10 +73,8 @@ def _get_suggested_dishes(
         lower_loved_flavor = [flavor.lower() for flavor in current_user.loved_flavor]
         conditions.append(
             or_(
-                func.lower(Dish.info).contains(func.any_(lower_loved_flavor)),
-                Dish.categories.op("&&")(
-                    array(lower_loved_flavor)
-                ),  # Overlap with categories
+                *[func.lower(Dish.info).ilike(f"%{flavor}%") for flavor in lower_loved_flavor],
+                *[any_(Dish.categories).ilike(f"%{flavor}%") for flavor in lower_loved_flavor],
             )
         )
 
@@ -84,10 +82,17 @@ def _get_suggested_dishes(
         lower_hated_flavor = [flavor.lower() for flavor in current_user.hated_flavor]
         conditions.append(
             ~or_(
-                func.lower(Dish.info).contains(func.any_(lower_hated_flavor)),
-                 Dish.categories.op("&&")(
-                    array(lower_hated_flavor)
-                ),  
+                *[func.lower(Dish.info).ilike(f"%{flavor}%") for flavor in lower_hated_flavor],
+                *[any_(Dish.categories).ilike(f"%{flavor}%") for flavor in lower_hated_flavor],
+            )
+        )
+        
+    if current_user.loved_dish:
+        lower_loved_dish = [dish.lower() for dish in current_user.loved_dish]
+        conditions.append(
+            or_(
+                *[func.lower(Dish.info).ilike(f"%{flavor}%") for flavor in lower_loved_dish],
+                *[any_(Dish.categories).ilike(f"%{flavor}%") for flavor in lower_loved_dish],
             )
         )
 
