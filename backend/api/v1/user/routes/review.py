@@ -1,4 +1,5 @@
 from typing import Annotated
+from urllib import response
 
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
@@ -20,11 +21,11 @@ def get_dish_reviews(
     dish_id: int,
     db: Session = Depends(get_db)
 ):
-    reviews, total, avg_rating = review_service.get_dish_reviews(db, dish_id)
+    response = review_service.get_dish_reviews(db, dish_id)
     return ListingDishReviewsResponse(
-        total=total,
-        reviews=reviews,
-        avg_rating=avg_rating,
+        total=response.total,
+        reviews=response.reviews,
+        avg_rating=response.avg_rating
     )
 
 

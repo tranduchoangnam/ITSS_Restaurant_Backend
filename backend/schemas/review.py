@@ -9,6 +9,8 @@ class ReviewBase(BaseModel):
     id: Optional[int]
     user_id: Optional[int]
     dish_id: Optional[int]
+    display_name: Optional[str]
+    avatar_url: Optional[str]
     rating: Optional[int]
     comment: Optional[str]
     created_at: Optional[datetime]
