@@ -8,7 +8,7 @@ from backend.core.response import authenticated_api_responses, public_api_respon
 from backend.db.database import get_db
 from backend.models.dish import Dish
 from backend.models.user import RoleCode, User
-from backend.schemas.dish import FilteringDishesQueryParams, ListingDishesResponse, CreateDishRequest, DishBase, UpdateDishRequest
+from backend.schemas.dish import FilteringDishesQueryParams, ListingDishesResponse, CreateDishRequest, CreateDishBulkRequest, DishBase, UpdateDishRequest, ListingDishBase
 
 router = APIRouter()
 
@@ -23,6 +23,18 @@ def create_dish(
     admin: Annotated[User, Depends(authorize_role(RoleCode.ADMIN))] = None,
 ):
     return dish_service.create_dish(db, **request.model_dump())
+
+@router.post(
+    "/bulk",
+    response_model=ListingDishBase,
+    responses=authenticated_api_responses,
+)
+def create_dish_bulk(
+    request: CreateDishBulkRequest,
+    db: Session = Depends(get_db),
+    admin: Annotated[User, Depends(authorize_role(RoleCode.ADMIN))] = None,
+):
+    return dish_service.create_dish_bulk(db, **request.model_dump())
     
 @router.get(
     "",

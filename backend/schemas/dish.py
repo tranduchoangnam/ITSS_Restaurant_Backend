@@ -26,6 +26,10 @@ class GetDishDetailResponse(DishBase):
     distance: Optional[float]
     pass
 
+class ListingDishBase(BaseModel):
+    data: List[DishBase]
+    total: int
+
 class ListingDishesResponse(BaseResponse[GetDishDetailResponse]):
     pass
 
@@ -57,6 +61,26 @@ class CreateDishRequest(BaseModel):
                     "info": "美味しい",
                     "images": ["https://static.vinwonders.com/production/com-tho-da-nang-4.jpg"],
                     "categories": ["和食", "寿司"]
+                }
+            ]
+        }
+    }
+
+class CreateDishBulkRequest(BaseModel):
+    data: List[CreateDishRequest]
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "data": [{
+                        "name": "Cơm thố Bách Khoa",
+                        "address": "111 K2 Ng. 48 P. Tạ Quang Bửu, Bách Khoa, Hoàn Kiếm, Hà Nội, Vietnam",
+                        "price": 50000,
+                        "info": "美味しい",
+                        "images": ["https://static.vinwonders.com/production/com-tho-da-nang-4.jpg"],
+                        "categories": ["和食", "寿司"]
+                    }]
                 }
             ]
         }
