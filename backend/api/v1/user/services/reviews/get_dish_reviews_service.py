@@ -3,7 +3,7 @@ from sqlalchemy import select
 
 from backend.models.review import Review
 from backend.models.user import User
-from backend.schemas.review import ReviewBase
+from backend.schemas.review import ListingDishReviewsResponse, ReviewBase
 
 def get_dish_reviews(
     db: Session,
@@ -20,8 +20,12 @@ def get_dish_reviews(
         queryUser = select(User).where(User.id == review.user_id)
         user = db.exec(queryUser).scalars().first()
         tmp_review = review.model_dump()
-        tmp_review['user_name'] = user.display_name
-        tmp_review['user_avatar_url'] = user.avatar_url
+        tmp_review['display_name'] = user.display_name
+        tmp_review['avatar_url'] = user.avatar_url
         review_bases.append(ReviewBase(**tmp_review))
 
-    return review_bases, total, avg_rating
+    return ListingDishReviewsResponse(
+        total=total,
+        reviews=review_bases,
+        avg_rating=avg_rating,
+    )
