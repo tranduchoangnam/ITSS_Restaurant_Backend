@@ -9,8 +9,6 @@ class ReviewBase(BaseModel):
     id: Optional[int]
     user_id: Optional[int]
     dish_id: Optional[int]
-    display_name: Optional[str]
-    avatar_url: Optional[str]
     rating: Optional[int]
     comment: Optional[str]
     created_at: Optional[datetime]
@@ -34,7 +32,19 @@ class CreateReviewRequest(BaseModel):
         }
     }
 
+
+class ReviewDetailResponse(ReviewBase):
+    display_name: Optional[str]
+    avatar_url: Optional[str]
+    pass
+
 class ListingDishReviewsResponse(BaseModel):
     avg_rating: float
     total: int
-    reviews: List[ReviewBase]
+    reviews: List[ReviewDetailResponse]
+
+class CreateReviewResponse(BaseModel):
+    user_id: int
+    dish_id: int
+    rating: int
+    comment: str
