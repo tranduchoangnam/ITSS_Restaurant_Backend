@@ -9,6 +9,8 @@ class ReviewBase(BaseModel):
     id: Optional[int]
     user_id: Optional[int]
     dish_id: Optional[int]
+    user_name: Optional[str]
+    user_avatar_url: Optional[str]
     rating: Optional[int]
     comment: Optional[str]
     created_at: Optional[datetime]
@@ -24,6 +26,8 @@ class CreateReviewRequest(BaseModel):
             "examples": [
                 {
                     "user_id": 1,
+                    "user_name": "Nguyen Van A",
+                    "user_avatar_url": "https://example.com/avatar.jpg",
                     "dish_id": 1,
                     "rating": 5,
                     "comment": "Rat ngon ma khong so nong",
