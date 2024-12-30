@@ -11,7 +11,7 @@ from sqlalchemy import (
     Boolean,
     Integer,
     ARRAY,
-    Float,
+    ForeignKey
 )
 from sqlmodel import Field, SQLModel
 
@@ -25,7 +25,7 @@ class Review(SQLModel, BaseCreateUpdateModel, table=True):
     }
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id")
-    dish_id: Optional[int] = Field(default=None, foreign_key="dishes.id")
+    dish_id: Optional[int] = Field(sa_column=Column(Integer, ForeignKey("dishes.id", ondelete="CASCADE")))
     rating: Optional[int] = Field(sa_column=Column(Integer), default=0)
     comment: Optional[str] = Field(sa_column=Column(Text), default=None)
 
